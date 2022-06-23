@@ -1,51 +1,60 @@
-// const gridnum = 16;
-// const cellnum = 16;
+let color = "black";
+let click = true;
 
-let container = document.querySelector(".container");
-let rows = document.getElementsByClassName("row");
-let cells = document.getElementsByClassName("cell");
+function populateBoard(size) {
+  let board = document.querySelector(".board");
+  let squares = board.querySelectorAll("div");
+  squares.forEach((div) => div.remove());
+  board.style.gridTemplateColumns = `repeat(${size} , 1fr)`;
+  board.style.gridTemplateRows = `repeat(${size} , 1fr)`;
 
-let rowsclass = document.querySelector("cell");
-let button = document.querySelector(".btn");
-
-// button.addEventListener("click", (gridcells) => {});
-
-function changeGrid(input) {
-  gridrows(input);
-  gridcells(input);
-}
-
-function gridrows(gridnum) {
-  for (i = 0; i < gridnum; i++) {
-    let row = document.createElement("div");
-    row.className = "row";
-    container.appendChild(row);
+  let amount = size * size;
+  for (let i = 0; i < amount; i++) {
+    let square = document.createElement("div");
+    square.addEventListener("mouseover", colorSquare);
+    square.style.backgroundColor = "white";
+    board.insertAdjacentElement("beforeend", square);
   }
 }
-gridrows(16);
 
-function gridcells(cellnum) {
-  for (i = 0; i < rows.length; i++) {
-    for (j = 0; j < cellnum; j++) {
-      //iterate on each row
-      let cell = document.createElement("div");
-      rows[j].appendChild(cell).className = "cell";
+populateBoard(16);
+
+function changeSize(input) {
+  if (input >= 2 && input <= 100) {
+    document.querySelector(".error").style.display = "none";
+    populateBoard(input);
+  } else {
+    document.querySelector(".error").style.display = "flex";
+  }
+}
+
+function colorSquare() {
+  if (click) {
+    if (color === "random") {
+      this.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+    } else {
+      this.style.backgroundColor = color;
     }
   }
 }
-gridcells(16);
 
-for (i = 0; i < cells.length; i++) {
-  cells[i].addEventListener("mouseover", (event) => {
-    event.target.style.backgroundColor = "salmon";
-  });
-  // cells[i].addEventListener("mouseout", (event) => {
-  //   event.target.style.backgroundColor = "white";
-  // });
+function changeColor(choice) {
+  color = choice;
 }
-// cells[i].addEventListener("mouseover", () => {
-//   document.body.style.backgroundColor = "salmon";
-// });
-// cells[i].addEventListener("mouseout", () => {
-//   document.body.style.backgroundColor = "pink";
-// });
+
+function resetBoard() {
+  let board = document.querySelector(".board");
+  let squares = board.querySelectorAll("div");
+  squares.forEach((div) => (div.style.backgroundColor = "white"));
+}
+
+document.querySelector("body").addEventListener("click", (e) => {
+  if (e.target.tagName != "BUTTON") {
+    click = !click;
+    if (click) {
+      document.querySelector(".mode").textContent = "Mode: Coloring";
+    } else {
+      document.querySelector(".mode").textContent = "Mode: Not Coloring";
+    }
+  }
+});
